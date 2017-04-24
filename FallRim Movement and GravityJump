@@ -1,0 +1,149 @@
+"""Added gravity and movement"""
+
+
+
+#GAME
+import pygame
+import time
+import random
+import sys
+from pygame.locals import *
+
+
+
+#color constants
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+PURPLE = (128, 0, 128)
+FUCHSIA = (255, 0, 255)
+BLACK = (0, 0, 0)
+YELLOW = (255, 255, 0)
+
+speed = 5
+
+DRAGON = 'dragonborn.jpg'
+
+
+#initializes program
+pygame.init()
+
+
+# Set the screen size
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 500
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+
+# Fill the screen with green.
+SCREEN.fill((0, 255, 0))
+
+FPS = 30
+fpsClock = pygame.time.Clock()
+
+playerGroup = pygame.sprite.Group()
+allSpritesGroup = pygame.sprite.Group()
+
+class Player(pygame.sprite.Sprite):
+    health = 25
+    speed = 5
+
+
+    def __init__(self):
+	# Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = pygame.image.load(DRAGON).convert()
+        self.image = pygame.transform.scale(self.image, (50, 75))
+        self.rect = self.image.get_rect()
+
+    def gravity(self):
+        self.rect.y += 1
+
+    def jump(self):
+        if self.rect.y > 300:
+            self.rect.y -= 3
+
+player = Player()
+player.rect.x = 50
+player.rect.y = 300
+
+player2 = Player()
+player2.rect.x = 650
+player2.rect.y = 300
+
+
+playerGroup.add(player, player2)
+allSpritesGroup.add(player, player2)
+xDir = 0
+yDir = 0
+xDir2 = 0
+yDir2 = 0
+while True:
+
+
+#Player 0n3 movement code
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+    if player.rect.y < 400:
+        player.gravity()
+
+    if event.type == KEYDOWN:
+        if event.key == K_UP and player.rect.y == 400:
+            yDir = -2
+        elif event.key == K_LEFT:
+            xDir = -speed
+        elif event.key == K_RIGHT:
+            xDir = speed
+
+
+    if event.type == KEYUP:
+        if event.key == K_UP:
+            yDir = 0
+        if event.key == K_LEFT:
+            xDir = 0
+        elif event.key == K_RIGHT:
+            xDir = 0
+
+
+
+#Player 2 movement code
+    if player2.rect.y < 400:
+        player2.gravity()
+
+    if event.type == KEYDOWN:
+        if event.key == K_w and player2.rect.y == 400:
+            yDir2 = -2
+        elif event.key == K_a:
+            xDir2 = -speed
+        elif event.key == K_d:
+            xDir2 = speed
+
+
+    if event.type == KEYUP:
+        if event.key == K_w:
+            yDir2 = 0
+        if event.key == K_a:
+            xDir2 = 0
+        elif event.key == K_d:
+            xDir2 = 0
+
+
+
+
+
+
+    player.rect.x += xDir
+    player.rect.y += yDir
+    player2.rect.x += xDir2
+    player2.rect.y += yDir2
+
+
+
+    SCREEN.fill(BLACK)
+    allSpritesGroup.draw(SCREEN)
+
+    pygame.display.update()
+    fpsClock.tick(FPS)
